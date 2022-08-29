@@ -1,0 +1,65 @@
+///////////////////////////////////////////////////////////////////
+// Sass Mixins which will be used by the modules                 //
+///////////////////////////////////////////////////////////////////
+
+//===============================================================//
+//          Automatically add vendor prefixes in one hit         //
+//===============================================================//
+//      .fadeIn {                                                //
+//          @include animate-prefixer(animation, 'fadeIn');        //
+//      }                                                        //
+//===============================================================//
+//                                                               //
+//===============================================================//
+@mixin animate-prefixer($property, $value...) {
+    //-webkit-#{$property}: unquote('#{$value}');
+    #{$property}: unquote('#{$value}');
+}
+@mixin prop-prefixer ($property,$value...){
+    //-moz-#{$property}: unquote('#{$value}');
+    //-webkit-#{$property}: unquote('#{$value}');
+    //-o-#{$property}: unquote('#{$value}');
+    //-ms-#{$property}: unquote('#{$value}');
+    #{$property}: unquote('#{$value}');
+}
+//===============================================================//
+// Generate keyframes animations with vendor prefixes in one hit //
+//===============================================================//
+//      .fadeIn {                                                //
+//          @include animate-prefixer(animation, fadeIn);        //
+//      }                                                        //
+//      @include animate-keyframe(fadeIn) {                      //
+//          0% {opacity: 0;}                                     //
+//          100% {opacity: 1;}                                   //
+//      }                                                        //
+//===============================================================//
+// Courtesy of @integralist: (twitter.com)                       //
+//===============================================================//
+
+@mixin animate-keyframe($animation-name) {
+    /*@-webkit-keyframes #{$animation-name} {
+        @content;
+    }*/
+
+    @keyframes #{$animation-name} {
+        @content;
+    }
+}
+
+@mixin orientation($direction) {
+
+    $orientation-landscape: "(orientation:landscape)";
+    $orientation-portrait: "(orientation:portrait)";
+
+    @if $direction == landscape {
+        @media #{$orientation-landscape} {
+            @content;
+        }
+    }
+
+    @if $direction == portrait {
+        @media #{$orientation-portrait} {
+            @content;
+        }
+    }
+} 

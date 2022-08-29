@@ -1,0 +1,39 @@
+﻿@import "variables";
+@import "bootstrap/mixins";
+.grid {
+    margin-left: -5px;
+    margin-right: -5px;
+}
+.grid-item {
+    width: auto;
+    padding: 5px;
+    .card {
+        border-radius: 0;
+    }
+    .card-body {
+        padding-left: 9%;
+        padding-right: 9%;
+        padding-top: 2.5rem;
+        padding-bottom: 2.5rem;
+    }
+    .card-title {
+        margin:0;
+    }
+}
+
+@include media-breakpoint-up (md) {
+    .grid-item {
+        width: 50%;
+    }
+}
+@media (min-width: 1300px) {
+    .grid-item {
+        width: 33.33%;
+    }
+}
+
+@media (min-width: 1780px) {
+    .grid-item {
+        width: 25%;
+    }
+}

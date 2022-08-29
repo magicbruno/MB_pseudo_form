@@ -1,0 +1,54 @@
+﻿@import "../../../node_modules/bootstrap/scss/functions";
+@import "variables";
+@import "../../../node_modules/bootstrap/scss/mixins";
+
+.grid-wrapper {
+    display: flex;
+    flex-flow: column nowrap;
+    overflow: hidden;
+    justify-content: center;
+    align-items: stretch;
+    margin-top: -1px;
+    margin-bottom: -1px;
+
+    .grid-row {
+        flex: 0 0 10%;
+        padding-top: 1px;
+        padding-bottom: 1px;
+        display: flex;
+        justify-content: center;
+        align-items: stretch;
+        margin-left: -1px;
+        margin-right: -1px;
+        min-height: 10%;
+
+        .grid-col {
+            flex: 0 0 10%;
+            padding-left: 1px;
+            padding-right: 1px;
+            display: flex;
+            background-size: cover;
+            background-clip:content-box;
+            background-repeat: no-repeat;
+            background-position: center;
+            min-width: 10%;
+        }
+    }
+}
+
+.film-slider-container {
+    min-height: 100vh;
+    padding-top: 66px;
+
+    @include media-breakpoint-up(md) {
+        padding-top: 81px;
+    }
+
+    @include media-breakpoint-up(xl) {
+        padding-top: 91px;
+    }
+
+    @include media-breakpoint-up(xxl) {
+        padding-top: 106px;
+    }
+}

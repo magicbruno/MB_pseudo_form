@@ -1,0 +1,24 @@
+.nav-tabs {
+    --bs-nav-tabs-border-width: 0;
+    --bs-nav-tabs-border-color: transparent;
+    --bs-nav-tabs-border-radius: 0;
+    --bs-nav-tabs-link-hover-border-color: transparent;
+    --bs-nav-tabs-link-active-color: var(--bs-gray-300);
+    --bs-nav-tabs-link-active-bg: transparent;
+    --bs-nav-tabs-link-active-border-color: var(--bs-primary);;
+    border-bottom: 0;
+    .nav-link {
+        border: 0;
+        padding-left: 0.5rem;
+        margin-left: 0.5rem;
+        padding-right: 0.5rem;
+        margin-right: 0.5rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        font-weight: 300;
+        &.active {
+            color: var(--bs-gray-100);
+            border-bottom: 2px solid var(--bs-primary);
+        }
+    }
+}

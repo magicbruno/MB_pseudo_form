@@ -1,0 +1,12 @@
+﻿.cookies-alert {
+    display: none;
+}
+
+.cookies-modal {
+    .cookies-alert {
+        display: block;
+    }
+    .cookies-accepted {
+        display: none;
+    }
+}

@@ -1,0 +1,125 @@
+﻿@import "variables";
+@import "mixins";
+
+.loader {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1000000;
+    background-color: rgba($dark,.7);
+
+
+    &.collapsed {
+        height: 1px;
+        top: -1px;
+    }
+
+    .loader-base, .loader-rec, .loader-led {
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+    }
+
+    .loader-base {
+        background-image: url('/assets/img/loader_base.svg');
+
+        @include orientation (portrait) {
+            transform: rotate(90deg);
+        }
+
+        z-index: 1;
+    }
+
+    .loader-rec {
+        background-image: url('/assets/img/loader-rec.svg');
+        z-index: 2;
+    }
+
+    .loader-led {
+        background-image: url('/assets/img/loader-led.svg');
+        z-index: 3;
+        animation: flash 1s alternate-reverse infinite;
+    }
+}
+
+.loader2 {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1000000;
+    background-color: rgba(0, 0, 0, .8);
+
+    &.collapsed.d-flex {
+        display: none !important;
+    }
+}
+
+.led {
+    height: 4vw;
+    width: 4vw;
+    background-color: #f00;
+    border-radius: 50%;
+    animation: flash 0.6s infinite;
+}
+
+
+
+.text-rec {
+    font-family: "Poppins", sans-serif;
+    font-size: 5vw;
+    line-height: 1.2;
+    line-height: 1;
+    position: relative;
+    font-weight: 600;
+}
+
+@media only screen and (orientation:portrait) {
+    .text-rec {
+        font-size: 10vw;
+    }
+
+    .led {
+        height: 9vw;
+        width: 9vw;
+    }
+}
+
+
+@keyframes flash {
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+    }
+}
+
+@keyframes spinner-border {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.loading-spin::after {
+    content: "";
+    display: block;
+    position: absolute;
+    width: 6rem;
+    height: 6rem;
+    top: calc(50% - 3rem);
+    left: calc(50% - 3rem);
+    border: 3px solid var(--bs-white);
+    border-radius: 50%;
+    border-left-color: rgba(var(--bs-white-rgb), 0.3);
+    animation: 1.2s linear infinite spinner-border;
+}

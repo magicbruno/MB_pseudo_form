@@ -1,0 +1,170 @@
+<h1 id="interceptor">Interceptor</h1>
+<p>Interceptor consente di <em>osservare</em> in modo asincrono quando un elemento HTML interseca (entra o esce da) la <em>viewport</em> del documento.</p>
+<p>Interceptor può essere utile in molti casi:</p>
+<ul>
+<li>Quando si voglio caricare le immagini solo quando lo scroll della pagina le fa apparire nella viewport (<em>lazy loading</em>).</li>
+<li>Quando si vuole implementare in un sito Web il cosiddetto <em>Infinite Scrolling</em>, in cui ulteriori contenuti vengono caricati quando l&#39;utente scrollando arriva in fondo alla pagina.</li>
+<li>Quando si vuole controllare il reale numero di visualizzazione dei banner pubblicitari.</li>
+<li>Quando si vogliono fare partire determinati processi (come, ad esempio, un animazione) quando l&#39;elemento coinvolto entra nella viewport .</li>
+</ul>
+<p>Interceptor, per raggiungere il suo scopo, utilizza <a href="https://developer.mozilla.org/en-us/docs/web/api/intersection_observer_api">Intersection Observer API</a> supportato da tutti i browser moderni (vedi <a href="https://caniuse.com/?Search=IntersectionObserver">Caniuse.com</a>).</p>
+<p>Nel caso in cui IntersectionObserver non sia disponibile, Interceptor gestirà gli <em>elementi osservati</em> come se fossero sempre visibili nella viewport.</p>
+<h2 id="getting-started">Getting started</h2>
+<p>È possibile caricare interceptor direttamente da CDN</p>
+<pre><code>&lt;script src=&quot;https://cdn.jsdelivr.net/npm/@magicbruno/interceptor@1.0.0/dist/interceptor.min.js&quot; 
+    integrity=&quot;sha256-u42Lk+YdUFJOJeCx7ihJsbyI9uEUE9cTDjleJKlMc4k=&quot; 
+    crossorigin=&quot;anonymous&quot;&gt;&lt;/script&gt;
+</code></pre>
+<p>o installalo con NPM </p>
+<pre><code>npm install @magicbruno/interceptor@1.0.0
+</code></pre>
+<p>o clonare il repository da Github: </p>
+<pre><code>git clone https://github.com/magicbruno/Interceptor.git
+</code></pre>
+<p>o <a href="https://github.com/magicbruno/Interceptor/archive/refs/heads/main.zip">scaricare l&#39;archivio zip</a>.</p>
+<h2 id="come-funziona">Come funziona</h2>
+<p>Innanzitutto bisogna creare un&#39;istanza di Interceptor che eseguirà il compito di <em>osservare</em> uno o più elementi e associare un&#39;azione al fatto che entrino od escano dalla viewport.</p>
+<pre><code>const interceptor = new Interceptor();
+</code></pre>
+<p>Gli elementi target devono avere l&#39;attributo <code>data-interceptor=&quot;nome&quot;</code> dove <em>nome</em> è <em>un nome Interceptor</em> arbitrario che devi assegnare a tuo piacimento. Gli elementi con lo stesso <em>nome Interceptor</em> condivideranno la stessa azione.</p>
+<p>Per aggiungere un elemento o un gruppo di elementi alla lista di controllo Interceptor, è necessario applicare il metodo <code>Interceptor.observe ()</code> all&#39;istanza creata</p>
+<pre><code>interceptor.observe(nome, azione);
+</code></pre>
+<p>Laddove <em>nome</em> è il valore assegnato all&#39;attributo <code>data-interceptor</code> e azione può essere una <em>stringa</em> o una <em>funzione</em> e verrà eseguita ogni volta che ci sarà una modifica dell&#39;intersezione dell&#39;elemento target con la viewport del documento.</p>
+<p>Se l&#39;azione è una <em>stringa</em> verrà interpretata come il nome di una classe che verrà attivata a secondo della visibilità dell&#39;elemento (aggiunto all&#39;elemento target quando è nella viewport e rimossa quando è offscreen).</p>
+<p>Se l&#39;azione è una <code>funzione</code> verrà chiamata con due parametri: il primo è l&#39;elemento osservato, il secondo, il cosiddetto interception ratio, è un numero tra 0.0 e 1.0 che indica quale percentuale dell&#39;elemento è visibile nella viewport.</p>
+<p>In questo esempio, Interceptor viene utilizzato per far partire l&#39;animazione di ogni <em>skill bar</em> quando diventa visibile nella viewport. Vedi l&#39;esempio completo <a href="demo.html">qui</a>:</p>
+<pre><code>interceptor.observe(&#39;skill&#39;, (target, ratio) =&gt; {
+      let percent = target.dataset.percent;
+      if (ratio === 0) {
+        target.style.setProperty(&#39;--bar-width&#39;, &#39;0&#39;);
+      } else if (ratio === 1) {
+        target.style.setProperty(&#39;--bar-width&#39;, percent);
+      }
+    }
+});
+</code></pre>
+<p>Tutti gli elementi con <code>data-interceptor=&quot;skill&quot;</code> vengono aggiunti alla lista di controllo. Quando l&#39;azione viene chiamata, se l&#39;elemento è interamente nella viewport del documento (ratio === 1) la larghezza della barra è animata fino alla percentuale ottenuta dall&#39;attributo <code>data-percentage</code>, se è offscreen (rapporto === 0) la larghezza della barra è impostata su 0.</p>
+<p>Invece di invocare ripetutamente il metodo <code>interceptor.observe</code> puoi ottenere lo stesso risultato chiamando il <code>constructor</code> con una matrice di oggetti come primo parametro. Ogni oggetto nell&#39;array avrà due proprietà <code>name</code> e <code>action</code> corrispondenti ai parametri del metodo <code>interceptor.observe</code>.</p>
+<h3 id="thresholds-soglie">Thresholds (soglie)</h3>
+<p>Invece che segnalare ogni cambiamento infinitesimale di quanto un elemento target è visibile nella viewport, the Intersection Observer API usa delle <em>soglie</em> (thresholds). Solo quando la percentuale visibile dell&#39;elemento raggiunge queste soglie il cambiamento viene segnalato. </p>
+<p>Le soglie predefinite di Interceptor sono 0 e 1.0 (rappresentate nell&#39;array [0,1.0]), cioè le modifiche sono riportate solo quando l&#39;elemento target è interamente all&#39;interno del punto di vista (1.0) e quando è interamente fuori dallo schermo (0.0).</p>
+<p>Quando crei un interceptor, puoi fornire, come secondo parametro, le tue soglie. L&#39;API riporterà le modifiche di visibilità secondo queste soglie.</p>
+<p>Ad esempio, se desideri che Interceptor segnali l&#39;entrata e l&#39;uscita degli oggetti dalla viewport ogni 25% (oggetto non visibile, visibile per un quarto, visibile a metà, ecc.), devi specificare  l&#39;array [0, 0.25, 0.5, 0.75, 1] come elenco di soglie (threshold) quando crei l&#39;interceptor.</p>
+<blockquote>
+<h4 id="attenzione">Attenzione</h4>
+<p>Se <em>osservi</em> un elemento che è esattamente alto quanto la viewport o la cui altezza è <code>auto</code> e quindi potrebbe essere più alta dell&#39;altezza del vista, potresti non ricevere mai un <code>ratio</code> di 1, perché una parte dell&#39;elemento stesso sarà sempre fuori dallo schermo.</p>
+</blockquote>
+<h3 id="rootmargin">rootMargin</h3>
+<p><code>rootMargin</code> è una stringa che specifica i margini da aggiungere alla viewport durante il calcolo delle intersezioni, riducendo o allargando i bordi della viewport. La sintassi è approssimativamente uguale a quella per la proprietà del margine CSS.</p>
+<p>Quando si crea un intercettore, è possibile passare un rootmargin come terzo parametro.</p>
+<p>La rootMargin predefinita è &quot;0px 0px 0px 0px&quot;.</p>
+<h1 id="guida-di-riferimento">Guida di riferimento</h1>
+<h2 id="constructor">Constructor</h2>
+<h3 id="interceptor-1">Interceptor()</h3>
+<h4 id="sintassi">Sintassi</h4>
+<pre><code>new Interceptor(); 
+new Interceptor(watchList);
+new Interceptor(watchList, threshold);
+new Interceptor(watchList, threshold, rootMargin);
+</code></pre>
+<p>Il costruttore Interceptor() crea e restituisce un nuovo oggetto Interceptor.</p>
+<p>Se <code>watchList</code> viene specificato, tutti i gruppi di elementi definiti dalla proprietà <code>name</code> di tutti gli oggetti nell&#39;array saranno <em>osservati</em> e saranno associati alle <code>action</code> corrispondenti. Per default watchList è [], cioè gli elementi da <em>osservare</em> verranno definiti successivamente.</p>
+<p><code>threshold</code>, se impostato, deve essere un array di valori tra 0,0 e 1.0 inclusi. L&#39;elenco delle soglia viene ordinato in ordine crescente. Se l&#39;elenco di soglia è vuoto, è impostato sul array [0.0,1.0].</p>
+<p>Il rootMargin, se specificato, deve essere sintatticamente corretto. Il valore predefinito è <code>&#39;0px 0px 0px 0px&#39;</code>.</p>
+<h4 id="parameters">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th>Parametro</th>
+<th>Tipo</th>
+<th>Descrizione</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>watchList</code></td>
+<td><code>Array of objects</code></td>
+<td>Gli oggetti hanno due proprietà: <code>name</code>, <code>action</code></td>
+</tr>
+<tr>
+<td><code>threshold</code></td>
+<td><code>Array of number</code></td>
+<td>Un array di numeri tra 0.0 e 1.0, che specificano il rapporto tra area di intersezione visibile e quella totale dell&#39;elemento osservato. Un valore di 0,0 significa l&#39;oggetto viene considerato visibile se anche un solo pixel è visibile. 1.0 significa che l&#39;intero elemento target è visibile</td>
+</tr>
+<tr>
+<td><code>rootMargin</code></td>
+<td><code>string</code></td>
+<td>Una stringa che specifica i margini da aggiungere alla viewport durante il calcolo delle intersezioni, riducendo o crescendo l&#39;are su cui avviene il calcolo. La sintassi è approssimativamente uguale a quella per la proprietà <code>margin</code> in CSS. L&#39;impostazione predefinita è <code>&quot;0px 0px 0px 0px&quot;</code>.</td>
+</tr>
+</tbody></table>
+<h4 id="watchlist-object-properties">watchList object properties</h4>
+<table>
+<thead>
+<tr>
+<th>Proprietà</th>
+<th>Tipo</th>
+<th>Descrizione</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>name</code></td>
+<td><code>string</code></td>
+<td>Identifica tutti gli elementi con l&#39;attributo data-interceptor=<em>name</em></td>
+</tr>
+<tr>
+<td><code>action</code></td>
+<td><code>string</code> or <code>function</code></td>
+<td>Se <code>String</code> verrà interpretato come il nome della classe che verrà impostata secondo la visibilità degli elementi (aggiunta all&#39;elemento target quando visibile e rimossa quando offscreen). Se l&#39;azione è una <code>funzione</code> verrà richiamata con due parametri: il primo è l&#39;elemento osservato, il secondo, il cosiddetto interception ratio, è un numero tra 0.0 e 1.0 che indica quale percentuale dell&#39;elemento è visibile nella viewport.</td>
+</tr>
+</tbody></table>
+<h2 id="metodi">Metodi</h2>
+<h3 id="interceptorobserve">Interceptor.observe()</h3>
+<h4 id="sintassi-1">Sintassi</h4>
+<pre><code>observe(name, action);
+</code></pre>
+<p>Il metodo Interceptor.observe() aggiunge un gruppo di elementi all&#39;insieme di elementi target osservati dall&#39;oggetto interceptor. Un interceptor ha una unica serie di threshold, ma può monitorare più elementi target.</p>
+<h4 id="parametri">Parametri</h4>
+<table>
+<thead>
+<tr>
+<th>Parametro</th>
+<th>Tipo</th>
+<th>Descrizione</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>name</code></td>
+<td><code>string</code></td>
+<td>Aggiungi tutto l&#39;elemento con attributo data-interceptor=<em>name</em> all&#39;insieme degli elementi monitorati</td>
+</tr>
+<tr>
+<td><code>action</code></td>
+<td><code>string</code> or <code>function</code></td>
+<td>Associated an action to element group identified wit <code>name</code>. If <code>string</code> it will be interpreted as the name of class that will be toggled on element visibility (added to the target element when it is in viewport and removed when it is offscreen). Se <code>String</code> verrà interpretato come il nome della classe che verrà impostata secondo la visibilità degli elementi (aggiunta all&#39;elemento target quando visibile e rimossa quando offscreen). Se l&#39;azione è una <code>funzione</code> verrà richiamata con due parametri: il primo è l&#39;elemento osservato, il secondo, il cosiddetto interception ratio, è un numero tra 0.0 e 1.0 che indica quale percentuale dell&#39;elemento è visibile nella viewport.</td>
+</tr>
+</tbody></table>
+<h3 id="interceptorunobserve">Interceptor.unobserve()</h3>
+<h4 id="syntax">Syntax</h4>
+<pre><code>unobserve(name);
+</code></pre>
+<p>Il metodo Interceptor.unobserve() indica all&#39;interceptor di smettere di <em>osservare</em> il gruppo di elementi specificato.</p>
+<h4 id="parameters-1">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th>Parametro</th>
+<th>Tipo</th>
+<th>Descrizione</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>name</code></td>
+<td><code>string</code></td>
+<td>Rimuovi tutti gli elementi con attributo data-interceptor=<em>name</em> dall&#39;insieme di elementi target osservati</td>
+</tr>
+</tbody></table>
+<h3 id="interceptordisconnect">Interceptor.disconnect()</h3>
+<h4 id="syntax-1">Syntax</h4>
+<pre><code>disconnect(name);
+</code></pre>
+<p>Il metodo Interceptor.disconnect() smette di <em>osservare</em> l&#39;insieme degli elementi target monitorati dal interceptor.</p>

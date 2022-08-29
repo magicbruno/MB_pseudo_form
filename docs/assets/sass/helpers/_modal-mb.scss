@@ -1,0 +1,112 @@
+﻿/**video modal**/
+
+.modal {
+    z-index: 99999;
+
+    .modal-xl {
+        max-width: 90%;
+        margin: 1.75rem auto;
+    }
+
+    .modal-content {
+        border-radius: 0;
+    }
+
+    .close {
+        margin-top: 0;
+        position: absolute;
+        top: 5px;
+        right: 10px;
+        opacity: 1;
+        color: #aeaeae;
+
+        &:hover {
+            color: #000;
+        }
+
+        &::before, &::after {
+            content: "";
+        }
+    }
+
+    .modal-header {
+        height: 60px;
+        padding: 20px 50px;
+        border: 0;
+    }
+
+    .modal-body {
+        padding: 10px 50px 50px;
+    }
+
+    .close {
+        font-size: 30px;
+        top: 10px;
+        right: 22px;
+    }
+
+    &.share-modal {
+        background-color: #fff;
+        height: 300px;
+        left: 50%;
+        margin-left: -205px;
+        margin-top: -150px;
+        position: absolute;
+        top: 50%;
+        width: 410px;
+        z-index: 10;
+        color: rgba(35,35,35,0.8);
+        -moz-box-shadow: 0 0 100px 0px rgba(0, 0, 0, 0.6);
+        -webkit-box-shadow: 0 0 100px 0px rgba(0, 0, 0, 0.6);
+        box-shadow: 0 0 100px 0px rgba(0, 0, 0, 0.6);
+        overflow: visible;
+
+        .modal-content {
+            border: 0;
+        }
+
+        a.modal-close:hover, a.modal-close:focus {
+            text-decoration: none;
+        }
+    }
+
+    &.bootbox-alert .modal-body{
+        padding: 50px;
+    }
+}
+
+.modal-black {
+    .modal-content {
+        background-color: black;
+        color: white !important;
+
+        h1, h2, h3, h4, h5, .h1, .h2, .h3, .h4, .h5 {
+            color: white;
+        }
+    }
+
+    .close {
+
+        &:hover {
+            color: #f0f0f0;
+        }
+    }
+}
+
+
+element.style {
+    display: block;
+    opacity: 1;
+    transform: matrix(1, 0, 0, 1, 0, 0);
+}
+
+
+
+
+
+@media (min-width: 576px) and (max-width: 968px) {
+    .modal-dialog {
+        max-width: 90%;
+        margin: 1.75rem auto;
+    }
+}

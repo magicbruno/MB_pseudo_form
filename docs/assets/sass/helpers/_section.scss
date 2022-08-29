@@ -1,0 +1,15 @@
+.page-section {
+    padding-bottom: 78px;
+    padding-top: 2rem;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    pre {
+        max-height: calc(100vh - 190px);
+    }
+}
+
+.img-75 {
+    max-height: 75vh;
+}

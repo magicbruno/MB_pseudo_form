@@ -1,0 +1,179 @@
+﻿@keyframes flash {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.15);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes backandforth {
+    0% {
+        transform: translateX(0);
+    }
+
+    50% {
+        transform: translateX(10px);
+    }
+
+    100% {
+        transform: translateX(0);
+    }
+}
+
+@keyframes rotate {
+    0% {
+        transform: rotate(0)
+    }
+
+    100% {
+        transform: rotate(360deg)
+    }
+}
+
+@keyframes shake-rotate {
+    0% {
+        transform: rotate(-5deg)
+    }
+    15% {
+        transform: rotate(5deg)
+    }
+
+    30% {
+        transform: rotate(-5deg)
+    }
+
+    45% {
+        transform: rotate(5deg)
+    }
+
+    60% {
+        transform: rotate(-5deg)
+    }
+
+    75% {
+        transform: rotate(0)
+    }
+}
+
+@keyframes traverse {
+    0% {
+        transform: translateX(4000px);
+    }
+
+    75% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(0);
+    }
+}
+
+@keyframes move-vertical {
+    0% {
+        transform: translate(0px, 4px);
+    }
+
+    50% {
+        transform: translate(0px, -4px);
+    }
+
+    100% {
+        transform: translate(0px, 4px);
+    }
+}
+
+@keyframes vibration {
+    0% {
+        transform: translateX(-22px);
+    }
+    9% {
+        transform: translateX(20px);
+    }
+    18% {
+        transform: translateX(-18px);
+    }
+    27% {
+        transform: translateX(16px);
+    }
+    36% {
+        transform: translateX(-14px);
+    }
+    45% {
+        transform: translateX(12px);
+    }
+    54% {
+        transform: translateX(-10px);
+    }
+    63% {
+        transform: translateX(8px);
+    }
+    72% {
+        transform: translateX(-6px);
+    }
+    72% {
+        transform: translateX(4px);
+    }
+    90% {
+        transform: translateX(-2px);
+    }
+    99% {
+        transform: translateX(0);
+    }
+}
+
+.flashing {
+    animation: flash ease-in-out 1s infinite;
+}
+
+.backandforth {
+    animation: backandforth ease-in-out .7s infinite;
+}
+
+.rotate {
+    animation: rotate .7s infinite;
+}
+
+.up-and-down {
+    animation: move-vertical 1s linear infinite;
+}
+
+.fade-down {
+    transform: translateY(-20%);
+    opacity:0;
+}
+
+.zoom-rotate-in {
+    opacity: 0;
+    transform: rotate(-180deg) scale(0.5);
+}
+
+.in-viewport {
+    &.fade-down, .fade-down {
+        transform: translateY(0);
+        opacity:1;
+        transition: all 1.2s;
+        transition-delay: 0.2s;
+    }
+    &.anim-shake-rotate, .anim-shake-rotate {
+        animation: shake-rotate 0.4s ease-in-out 2;
+        animation-delay: .5s;
+    }
+
+    &.zoom-rotate-in, .zoom-rotate-in {
+        transform: rotate(0) scale(1);
+        opacity:1;
+        transition: all .7s;
+        transition-delay: 0.2s;
+    }
+    &.anim-vibration, .anim-vibration {
+        animation: vibration 0.5s ease-in-out 2;
+        animation-delay: 0.2s;
+    }
+}

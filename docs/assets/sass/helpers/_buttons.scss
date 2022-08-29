@@ -1,0 +1,21 @@
+.btn {
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    font-weight: 300;
+    padding-left: 1.4em;
+    padding-right: 1.4em;
+    padding-top: 0.7em;
+    padding-bottom: 0.7em;
+}
+.rotate-180 {
+    transform: rotate(180deg)!important;
+}
+
+.btn-navpage {
+    &:hover {
+        color: var(--bs-primary);
+        border-color: var(--bs-primary);
+        text-decoration: none;
+    }
+    
+}

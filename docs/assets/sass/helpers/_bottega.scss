@@ -1,0 +1,32 @@
+﻿$calc : "100vh - 30px";
+.btn-bottega {
+    background-repeat: no-repeat;
+    background-size: cover;
+    width: auto;
+    max-height: 1080px;
+    display: block;
+
+    .img-bottega {
+        background-color: rgba(255,255,255,1);
+        height: calc(#{$calc});
+        max-height: 100%;
+        width: auto !important;
+        transition: all 0.5s;
+    }
+
+    &:hover .img-bottega {
+        background-color: rgba(255,255,255,0);
+        transition: all 0.5s;
+    }
+}
+.swiper-slide-active, .swoper-slide-duplicate-active {
+    .img-bottega {
+        background-color: rgba(255,255,255,0);
+        transition: all 0.5s;
+    }
+}
+.menu-duvart {
+    background-image: url(/userfiles/image/homemenu/SfondoMenu-or8.png);
+    background-size: cover;
+    background-repeat: no-repeat;
+}

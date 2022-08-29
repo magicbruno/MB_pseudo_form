@@ -1,0 +1,16 @@
+﻿@import "bootstrap/mixins";
+.progetto-page .modal-content {
+    background-image: url(/userfiles/image/pagina-progetto-fs8.png);
+    background-size: contain;
+    background-position: top;
+    background-repeat: no-repeat;
+    .row {
+        padding-top: 30px;
+        @include media-breakpoint-up(sm) {
+            padding-top: 120px;
+        }
+        @include media-breakpoint-up(md) {
+            padding-top: 140px;
+        }
+    }
+}

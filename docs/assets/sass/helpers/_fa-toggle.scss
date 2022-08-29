@@ -1,0 +1,47 @@
+﻿@import "../../../node_modules/font-awesome/scss/variables";
+@import "variables-custom";
+.on {
+    .fa {
+        &.fa-toggle-sound {
+            &::before {
+                content: $fa-var-volume-up;
+            }
+        }
+
+        &.fa-toggle-fullscreen {
+            &::before {
+                content: $fa-var-arrows-alt;
+            }
+        }
+    }
+}
+
+.off {
+    .fa {
+        position: relative;
+
+        &.fa-toggle-sound {
+            &::before {
+                content: $fa-var-volume-up;
+            }
+            &::after {
+                content: $fa-var-ban;
+                position: absolute;
+                top: -0.08em;
+                left: -0.08em;
+                color: $danger;
+                opacity: 0.5;
+                font-size: 1.3em;
+            }
+        }
+
+        &.fa-toggle-fullscreen {
+            &::before {
+                content: $fa-var-window-restore;
+            }
+        }
+    }
+}
+a.disabled, a[disabled] a {
+    cursor:default !important;
+}

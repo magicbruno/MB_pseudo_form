@@ -1,0 +1,33 @@
+﻿// Colori dei principali social
+
+
+$facebook-logo: #3b5998;
+$facebook-light: #8b9dc3;
+$facebook-lighter: #dfe3ee;
+$facebook-lightest: #f7f7f7;
+
+$twitter-logo: #00aced;
+$twitter-dark: #0084b4;
+$twitter-verified: #1dcaff;
+$twitter-background: #c0deed;
+
+$linkedin-logo: #007789;
+$googleplus-logo: #DD4B39;
+$whatsup-logo: #25D366;
+$reddit-logo: #FF5700;
+$pinterest-logo: #BD081C;
+$blogger-logo: #F57D00;
+
+$theme-colors: map-merge(
+  (
+    "facebook":     $facebook-logo,
+    "twitter" :     $twitter-logo,
+    "linkedin":     $linkedin-logo,
+    "googleplus":   $googleplus-logo,
+    "whatsapp":      $whatsup-logo,
+    "reddit":       $reddit-logo,
+    "pinterest":    $pinterest-logo,
+    "blogger":      $blogger-logo
+  ), 
+    $theme-colors
+)

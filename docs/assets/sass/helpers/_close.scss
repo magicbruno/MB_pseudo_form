@@ -1,0 +1,36 @@
+﻿.close {
+//    position: absolute;
+//    right: 32px;
+//    top: 32px;
+    width: 32px;
+    height: 32px;
+    opacity: 0.6 !important;
+}
+
+.close:hover {
+    opacity: 1 !important;
+}
+
+.close:before, .close:after {
+    position: absolute;
+    left: 24px;
+    content: ' ';
+    height: 26px;
+    width: 1px;
+    background-color: #333;
+    top: 3px;
+}
+
+.close:before {
+    transform: rotate(45deg);
+}
+
+.close:after {
+    transform: rotate(-45deg);
+}
+
+.modal-black {
+    .close:before, .close:after {
+        background-color: #fff;
+    }
+}

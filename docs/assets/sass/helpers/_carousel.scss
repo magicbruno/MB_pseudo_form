@@ -1,0 +1,82 @@
+﻿@import "../../../node_modules/bootstrap/scss/functions";
+@import "variables";
+@import "../../../node_modules/bootstrap/scss/mixins";
+
+.carousel {
+    background-color: transparent;
+}
+
+.carousel-cell {
+    width: 180px;
+    height: auto;
+    margin-right: 10px;
+    opacity: 1;
+    border-radius: 5px;
+    counter-increment: carousel-cell;
+    font-family: 'BenchNine', sans-serif;
+    font-size: 16px;
+
+    h1 {
+        font-family: 'BenchNine', sans-serif;
+        font-size: 16px;
+        text-transform: uppercase;
+        color: black;
+        margin: 0;
+        small {
+            text-transform: none;
+        }
+    }
+
+    @include media-breakpoint-up(md) {
+        width: 220px;
+    }
+
+    @include media-breakpoint-up(xl) {
+        width: 260px;
+
+        h1 {
+            font-size: 18px;
+        }
+    }
+
+    @include media-breakpoint-up(xxl) {
+        width: 280px;
+
+        h1 {
+            font-size: 22px;
+        }
+    }
+
+    .film-card {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        justify-content: flex-end;
+        padding: 10px;
+        overflow: hidden;
+
+        .film-caption {
+            background-color: #FFFFFFEE;
+            flex: 0, 0, 33%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10%;
+            height: 33%;
+            transition: all 1s;
+        }
+
+        &:hover .film-caption {
+            opacity: 0.7;
+            //transform: translateY(150%);
+        }
+    }
+}
+
+.carousel-cell.is-selected {
+    opacity: 1;
+}
+
+.flickity-button:disabled {
+    opacity: 0;
+}
