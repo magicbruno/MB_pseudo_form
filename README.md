@@ -14,6 +14,7 @@ The attached demo is a WebForm ASP.NET application where an API Controller trans
 `MB_PseudoForm` can be loaded directly from CDN,
 ```
 <script src="https://cdn.jsdelivr.net/npm/@magicbruno/mb_pseudoform@1.0.0/dist/MB_PseudoForm.min.js"></script>
+
 ```
 installed via NPM,
 ```
@@ -162,5 +163,5 @@ Open `Web.config` in **Visual Studio** editor and in the `appSettings` section e
 Then launch the application in Iis Express by pressing <kbd>f5</kbd> o <kbd>ctrl</kbd> + <kbd>f5</kbd>.
 
 > ## Note
-> To use the API controller `/ApiControllers/PseudoFormController.cs` in your project you could have to install the package [Microsoft.AspNet.WebApi](https://www.nuget.org/packages/Microsoft.AspNet.WebApi). You must also add the classes `/ApiControllers/ApiControllerResponse.cs` and `/ApiControllers/PseudoFormModel.cs` to the project. More information about ASP.NET Web Api [here](https://docs.microsoft.com/it-it/aspnet/web-api/).
+> To use the API controller `/ApiControllers/PseudoFormController.cs` in your project you could have to install the package [Microsoft.AspNet.WebApi](https://www.nuget.org/packages/Microsoft.AspNet.WebApi). You must also add the classes `/ApiControllers/ApiControllerResponse.cs` and `/ApiControllers/PseudoFormModel.cs` to the project. More information about ASP.NET Web Api [here](https://docs.microsoft.com/en-us/aspnet/web-api/).
 
