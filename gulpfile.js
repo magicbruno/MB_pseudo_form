@@ -12,7 +12,7 @@ const fs = require('fs');
 const sassSrc = 'docs/assets/sass/*.scss';
 const sassDest = 'docs/assets/css/';
 const jsSrc = 'index.js';
-const jsDest = 'docs/assets/js';
+const jsDest = 'demo/DemoMbPseudofrm/assets/js';
 
 function sass() {
   return src(sassSrc)
@@ -49,10 +49,10 @@ function compressjs() {
   return pipeline(
     src(jsSrc),
     uglify(),
-    rename('interceptor.min.js'),
+    rename('MB_PseudoForm.min.js'),
     dest(jsDest),
     src(jsSrc),
-    rename('interceptor.js'),
+    rename('MB_PseudoForm.js'),
     dest(jsDest)
   );
 }
@@ -85,15 +85,15 @@ function compressjs() {
 
 function creadist() {
   return pipeline(
-    src('docs/assets/js/**'),
+    src('demo/DemoMbPseudofrm/assets/js/**'),
     dest('dist/')
   )
 }
 
-exports.default = series(sass, sasscompress, compressjs, creadist, documentation, documentationIt);
-exports.sass = sass;
+exports.default = series(/* sass, sasscompress, */ compressjs, creadist, documentation, documentationIt);
+//exports.sass = sass;
 exports.compressjs = compressjs;
-exports.sasscompress = sasscompress;
+//exports.sasscompress = sasscompress;
 exports.creadist = creadist;
 exports.documentation = documentation;
 exports.documentationIt = documentationIt;

@@ -1,146 +1,166 @@
-# Interceptor
-Interceptor  provides a way to asynchronously observe when a target elements intersect (enter or exit from) the document's viewport.
+# MB_PseudoForm
+Mb_PseudoForm allows you to organize `input`, `select` and `textarea` elements in a container (typically a DIV element) and to send data entered by the user to a server using an "Ajax Request".
 
-Intersection information is needed for many reasons, such as:
+Mb_PseudForm can be useful:
 
-- Lazy-loading of images or other content as a page is scrolled.
-- Implementing "infinite scrolling" web sites, where more and more content is loaded and rendered as you scroll, so that the user doesn't have to flip through pages.
-- Reporting of visibility of advertisements in order to calculate ad revenues.
-- Deciding whether or not to perform tasks or animation processes based on whether or not the user will see the result.
+- in all situations when you want to send the user's input to the server without unloading the page.
+- in particular if you want to create entry modules in a WebForm ASP.NET application without using the Asp form (see the example in the demo folder)
 
-Interceptor, to  achieve its purpose, use [Intersection Observer API](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API) supported by all modern browsers (see [caniuse.com](https://caniuse.com/?search=intersectionObserver)).
+`Mb_PseudForm` sends data in the form as a list of objects. This allows you to build generic handlers server side, independent of the structure of the input module to elaborate. 
 
-In case Intersection Observer isn't available, interceptor will handle *observed elements* like they was always visible in the viewport.
+The attached demo is a WebForm ASP.NET application where an API Controller transforms any group of data entered by the user into a formatted email that is sent to the site staff.
 
 ## Getting started
-You can load Interceptor directly by CDN
+`MB_PseudoForm` can be loaded directly from CDN,
 ```
-<script src="https://cdn.jsdelivr.net/npm/@magicbruno/interceptor@1.0.0/dist/interceptor.min.js" 
-    integrity="sha256-u42Lk+YdUFJOJeCx7ihJsbyI9uEUE9cTDjleJKlMc4k=" 
-    crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@magicbruno/mb_pseudoform@1.0.0/dist/MB_PseudoForm.min.js"></script>
 ```
-or install it with npm 
+installed via NPM,
 ```
-npm install @magicbruno/interceptor@1.0.0
+npm install @magicbruno/mb_pseudoform@1.0.0
 ```
-or clone the repository from GitHub: 
+or you can clone the GitHub repository: 
 ```
-git clone https://github.com/magicbruno/Interceptor.git
+git clone https://github.com/magicbruno/MB_PseudoForm.git
 ```
-or [download the zip archive](https://github.com/magicbruno/Interceptor/archive/refs/heads/main.zip).
 
-## How it Works
-First you must create an instance of Interceptor that will perform the task of *observing* one or more elements and associating an action with them.
+## How does it work
+A pseudo form is an HTML element (for example a `div` element) that contains `input`, `select` and `textarea` elements and at least one clickable element (`<Button>` or `<a>`) which will submit the data.
+
+Minimum conditions because an HTML element becomes a pseudo form are:
+- that the handler intended to receive data server-side is defined using the `data-mb-action` attribute to be applied to the element itself
+- that the element contains a * Submit Button * defined by assigning to an element `<Button>` or to an element `<a>` the attribute `data-mb-toggle="submit `.
+
+
 ```
-const interceptor = new Interceptor();
+<div id="sample1-en" data-mb-action="api/PseudoForm">
+  <!-- Input fields -->
+  <button type="button" data-mb-toggle="submit">Invia dati</button>
+</div>
 ```
-Target elements must have the attribute `data-interceptor="name"` where *name* is an arbitrary *interceptor name* that you must assign. Elements with the same *interceptor name* will share the same action.
+### Initialization
 
-To add an element or a group of elements to the interceptor watch list, you must apply the `Interceptor.observe()` method to the created instance
+You can activate the pseudo form via javascript (`pform` can be a CSS selector or an HTML element)
 ```
-interceptor.observe(name, action);
+const myPseudoForm = new MB_PseudoForm(pForm) ;
 ```
-where *name* is the value assigned to data-interceptor attribute and action may be a `string` or a `function` and will be performed every time there will be a change in target element intersection with the document viewport.
+or simply by assigning the attribute `data-mb-ride="pseudo-form"` to the element.
 
-If action is a `string` it will be interpreted as the name of class that will be toggled on element visibility (added to the target element when it is in viewport and removed when it is offscreen).
-
-If action is a `function` it will be called with two parameter: the target element itself and the intersection ratio that is the percentage of target element visible in the viewport as a number between 0.0 (not in viewport) e 1.0 (entirely in viewport).
-
-In this example Interceptor is used to start animation of every *skill bar* when become visible in the viewport. See full example [here](demo.html):
 ```
-interceptor.observe('skill', (target, ratio) => {
-      let percent = target.dataset.percent;
-      if (ratio === 0) {
-        target.style.setProperty('--bar-width', '0');
-      } else if (ratio === 1) {
-        target.style.setProperty('--bar-width', percent);
-      }
-    }
-});
+<div id="sample1-en" data-mb-action="api/PseudoForm" data-mb-ride="pseudo-form">
+  <!-- Input fields -->
+  <button type="button" data-mb-toggle="submit">Invia dati</button>
+</div>
 ```
-All elements with `data-interceptor="skill"` are added to the watch list. When the action is called if the element is entirely in the document viewport (ratio === 1) the bar width is animated to percentage obtained from data-percentage attribute, if it is offscreen (ratio === 0) the bar width is set to 0.
+## Properties and methods
 
-Instead of repeatedly invoking the `Interceptor.observe` method you can achieve the same result by calling the constructor with an array of objects as the first parameter. Every object in the array will have two properties `name` and `action` corresponding to `Interceptor.observe` method parameters.
+It could be useful to illustrate how the pseudo form works. For more details, we recommend examining the code directly. It's clear and fully commented.
 
-### Thresholds
-Rather than reporting every infinitesimal change in how much a target element is visible, the Intersection Observer API uses thresholds. 
+MB_PseudoForm is based on three Javascript classes:
+- `MB_PseudoForm`, the main class
+- `MB_PseudoFormValue` which defines the object in which the user's entered fields are transformed for sending the server
+- `ValuesList` which provides some methods to manage a list of `MB_PseudoFormValue` 
 
-For default Interceptor use as thresholds [0,1.0] that is changes are reported only when the target element is entirely inside the viewport and when it is entirely offscreen.
+### MB_PseudoFormValue
+MB_PseudoFormValue provides 5 properties that reflect the characteristics and value of the fields compiled by the user.
 
-When you create an Interceptor, you can provide, as second  parameter, your own thresholds. Then, the API reports changes to visibility which cross these thresholds.
-
-For example, if you want to be informed every time a target's visibility passes backward or forward through each 25% mark, you would specify the array [0, 0.25, 0.5, 0.75, 1] as the list of thresholds when creating the interceptor.
-
-> #### Warning
-> If you *observe* an element that is exactly as tall as the viewport or whose height is auto and so may be higher then viewport height, you could never receive a ratio of 1, because a part of the element itself will be always offscreen.
-
-### rootMargin
-rootMargin is a string which specifies a set of offsets to add to the root's bounding_box when calculating intersections, effectively shrinking or growing the root for calculation purposes. The syntax is approximately the same as that for the CSS margin property.
-
-When you create an interceptor, you can pass a rootMargin as the third parameter. 
-
-The default is "0px 0px 0px 0px".
-
-# References
-## Constructor
-### Interceptor()
-#### Syntax
-```
-new Interceptor(); 
-new Interceptor(watchList);
-new Interceptor(watchList, threshold);
-new Interceptor(watchList, threshold, rootMargin);
-```
-The Interceptor() constructor creates and returns a new Interceptor object.
-
-If watchList is specified, all elements groups defined by the name property of all objects in the array will be watched and will be associated with corresponding actions, if not it is defaulted to [].
-
-The threshold, if specified, are checked to ensure that they're all in the range 0.0 and 1.0 inclusive, and the threshold list is sorted in ascending numeric order. If the threshold list is empty, it's set to the array [0.0,1.0].
-
-The rootMargin, if specified, is checked to ensure it's syntactically correct. If not specified, or an empty string, the default is 0px 0px 0px 0px.
-#### Parameters
-|Parameter|Type|Description|
+|Property | Type | Description |
 |---|---|---|
-|`watchList`|`Array of objects`|Objects have two properties: `name`, `action`|
-|`threshold`|`Array of number`|An array of numbers between 0.0 and 1.0, specifying a ratio of intersection area to total viewport for the observed target. A value of 0.0 means that even a single visible pixel counts as the target being visible. 1.0 means that the entire target element is visible|
-|`rootMargin`|`string`|A string which specifies a set of offsets to add to the root's bounding_box when calculating intersections, effectively shrinking or growing the root for calculation purposes. The syntax is approximately the same as that for the CSS margin property. The default is "0px 0px 0px 0px".|
-#### watchList object properties
+|`Name`|`string`|Reflects the content of the attribute `name` of the element. If the `name` attribute is not present, the `id` attribute will be used.|
+|`Type`|`string`|Reflects the content of the property `type`  of the element.|
+|`Value`|`any`|If the element is a `checkbox`, it's' `true` if selected, otherwise `false`. If the element is an input of type `file`, `Value` is the content of the file coded as DataUrlBase64. In other cases it reflects the content of the property `value` of the element.|
+|`Label`|`string`|Reflects the content of the attribute `aria-label` of the element. If the attribute is not present it returns the same value that `Name`|
+|`Detail`|`string`|If the element is an input of type `file`, it returns  the original file name. In other cases it can be used to transfer to the server additional information on that field (see demo)|
 
-|Property|Type|Description|
+The the pseudo form fields are transformed into MB_PseudoFormValue objects using the asynchronous static method `MB_Pseudoformvalue.CreateAsync` which returns a `Promise` that resolves with the created object. 
+
+### ValuesList
+The value returned by the `MB_PseudoForm.collectData` method (see below), which collects the fields compiled by the user as a list of `MB_PseudoFormValue` objects is an instance of the `ValueList` class.
+
+The `ValueList` class exposes only one property, `length` (which returns the length of the list) and offers some methods that help to manage it.
+
+| Method | Type returned | Description |
 |---|---|---|
-|`name`|`string`|Identify all elements with attribute data-interceptor=*name*|
-|`action`|`string` or `function`|If `string` it will be interpreted as the name of class that will be toggled on element visibility (added to the target element when it is in viewport and removed when it is offscreen). If action is a `function` it will be called with two parameter: the target element itself and the intersection ratio that is the percentage of target element visible in the viewport as a number between 0.0 (not in viewport) e 1.0 (entirely in viewport).|
+|`item(i)`|`MB_PseudoFormValue`|**Parameter**: *i* `number`. Returns the  `MB_PseudoFormValue` object with index *i*|
+|`push(obj)`|`number`|**Parameter**: *obj* `MB_PseudoFormValue`. Add a `MB_PseudoFormValue` object to the list. If there is already an object with the same `Name`, the present object is replaced by the one inserted. Returns the new length of the list.|
+|`remove(name)`|`boolean`|**Parameter**: *name* `string`. Removes the object with `Name` = *name* from the list. It returns `true` if the object has been removed `false` if it has not been found on the list.|
+|`indexOf(name)`|`number`|**Parameter**: *name* `string`. Search the list with the object with `Name` = *name*. If object is found, it returns its index otherwise `-1`.|
+|`getValue(name)`|`any`|**Parameter**: *name* `string`. Search the list with the object with `Name` = *name*. If found, returns it's `Value`, otherwise `null`.|
+|`clear()`|`none`|Clear the list|
 
-## Methods
-### Interceptor.observe()
-#### Syntax
-```
-observe(name, action);
-```
-The Interceptor method observe() adds an element group to the set of target elements being watched by the Interceptor. One interceptor has one set of thresholds, but can watch multiple target elements for visibility changes in keeping with those.
-#### Parameters
+### MB_PseudoForm
+>In general, it should not be necessary to directly access the properties and methods of `MB_PseudoForm`. The interface with the pseudo form is guaranteed by the events (`change.mb.pseudoform`, `validate.mb.pseudoform` e `submitted.mb.pseudoform`) which are dispatched in the key moments of the process.  
 
-|Parameter|Type|Description|
+#### **Properties**
+| Property | Type | Description |
 |---|---|---|
-|`name`|`string`|Add all element with attribute data-interceptor=*name* to the set of target elements|
-|`action`|`string` or `function`|Associated an action to element group identified wit `name`. If `string` it will be interpreted as the name of class that will be toggled on element visibility (added to the target element when it is in viewport and removed when it is offscreen). If action is a `function` it will be called with two parameter: the target element itself and the intersection ratio that is the percentage of target element visible in the viewport as a number between 0.0 (not in viewport) e 1.0 (entirely in viewport).|
+|`pseudoForm`|`HTML element`|Readonly property. Returns the HTML element on which the pseudo form was built.|
+|`submit`|`HTML element`|Readonly property. Returns the HTML element that is used as *Submit Button*|
+|`inputs`|`static NodeList`|Readonly property. Returns the list of elements (`input`, `select` e `textarea`) which are part of the pseudo form as a [static NodeList](https://developer.mozilla.org/en-US/docs/Web/API/NodeList).|
+|`pendingChanges`|`boolean`|It returns `true` if at least one input element has been changed. It is automatically reset when the data is sent to the server. It can be reset (set to `false`) also programmatically.|
 
-### Interceptor.unobserve()
-#### Syntax
-```
-unobserve(name);
-```
-The Interceptor method unobserve() instructs the Interceptor to stop observing the specified target element group.
-#### Parameters
-
-|Parameter|Type|Description|
+#### **Methods**
+| Method | Type returned | Description |
 |---|---|---|
-|`name`|`string`|Remove all elements with attribute data-interceptor=*name* from the set of target elements|
+|`collectData`|`Promise`|Asynchronous method. The Promise returned resolves the list of values entered by the user as a `ValueList`. |
+|`submitData`|none|It allows you to programmatically send the pseudo form to the server. It dispatches a  `validate.mb.pseudoform` event (cancelable) immediately before sending data and a `submitted.mb.pseudoform` event immediately after receiving the response from the server.|
 
-### Interceptor.disconnect()
-#### Syntax
+#### **Events**
+All events are sent to the HTML element on which the pseudo form is built. To manage them, therefore, just add an event listener to the element itself:
+
 ```
-disconnect(name);
+<div id="sample1-en" data-mb-action="api/PseudoForm" data-mb-ride="pseudo-form">
+  <!-- Input fields -->
+  <button type="button" data-mb-toggle="submit">Invia dati</button>
+</div>
+....
+<script>
+  const myForm = document.getElementById("sample1-en");
+  myForm.addEventListener('validate.mb.pseudoform', event => {
+    const values = event.detail;
+    // .......
+  })
+</script>
 ```
-The Interceptor method disconnect() stops watching all of its target elements for visibility changes.
+| Event | Description |
+|---|---|
+|`change.mb.pseudoform`|It is dispatched every time a pseudo form field is modified. The `detail` property of the event contains the HTML element whose `value` has been modified. |
+|`validate.mb.pseudoform`|It is dispatched immediately before the data is sent to the server.The detail property of the event contains the `ValueList` which is about to be sent. It allows you to validate the data before sending. To extract information on specific fields, the `ValueList` class methods can be applied to the list. To cancel sending process, apply the `preventDefault` method to the event|
+|`submitted.mb.pseudoform`|It is issued after the data is sent and either you have received the response from the server, or an error occurs. In the case of response from the server, the `detail` event property contains the response, in case of error contains an object with four properties: `Success` (`Boolean`, set to `false`), `Message` (`string`, contains the error message), `Exitcode` and `Data` currently not used (see demo for live example).|
+
+## Demo
+In the demo folder of the project you will find a simple ASP.NET Web Application that shows how to use `MB_PseudoForm` together with an API controller to generate, starting from a `MB_PseudoForm`, a formatted email with the information inserted by the user to send to the site staff and a thanksgiving email sent to the user himself.
+
+### Using the demo
+Clone the GIT repository on your computer
+```
+git clone https://github.com/magicbruno/MB_PseudoForm.git
+```
+or [download it](https://github.com/magicbruno/MB_pseudo_form/archive/refs/heads/main.zip).
+
+Open `/demo/demo.sln` in Visual Studio.
+
+Before running the application you must configure the SMTP server that the controller will use to send the generated email messages.
+
+Open `Web.config` in **Visual Studio** editor and in the `appSettings` section enter the data:
+```
+	<appSettings>
+    <!-- Enter URL of the smtp server -->
+		<add key="SmtpServer" value="..."/>
+    <!-- Insert smtp credentials -->
+		<add key="SmtpUsername" value="..."/>
+		<add key="SmtpPassword" value="..."/>
+    <!-- Change the SSL settings if necessary -->
+		<add key="SmtpPort" value="25"/>
+		<add key="SmtpUseSSL" value="false"/>
+    <!-- Sender of the messages sent by the server -->
+		<add key="DefaultSmtpFromMail" value="..."/>
+    <!-- Staff mailbox -->
+		<add key="MailTo" value="..."/>
+	</appSettings>
+```
+Then launch the application in Iis Express by pressing <kbd>f5</kbd> o <kbd>ctrl</kbd> + <kbd>f5</kbd>.
+
+> ## Note
+> To use the API controller `/ApiControllers/PseudoFormController.cs` in your project you could have to install the package [Microsoft.AspNet.WebApi](https://www.nuget.org/packages/Microsoft.AspNet.WebApi). You must also add the classes `/ApiControllers/ApiControllerResponse.cs` and `/ApiControllers/PseudoFormModel.cs` to the project. More information about ASP.NET Web Api [here](https://docs.microsoft.com/it-it/aspnet/web-api/).
 
